@@ -1,0 +1,44 @@
+{
+  "name": "quickuptime",
+  "version": "1.0.0",
+  "description": "A package which will easily help you uptime any url within the supplied interval.",
+  "main": "index.js",
+  "dependencies": {
+    "instant.db": "^1.0.0",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.17.0",
+    "nodemon": "^2.0.7"
+  },
+  "scripts": {
+    "test": "nodemon test/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lebyy/quickuptime.git"
+  },
+	"keywords": [
+    "quickuptime",
+    "discord.js",
+    "web",
+    "AI",
+    "chat",
+    "darkcodes",
+    "arc",
+    "npm",
+		"uptimer",
+		"ping",
+		"repl.it",
+		"glitch",
+		"quickuptime",
+		"express",
+		"fetch"
+  ],
+  "author": "Lebyy_Dev",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Lebyy/quickuptime/issues"
+  },
+  "homepage": "https://github.com/Lebyy/quickuptime#readme"
+}
