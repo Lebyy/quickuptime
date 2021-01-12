@@ -7,7 +7,7 @@
 Quick Uptime is a powerful module which allows you to Uptime any website
 
 
-## :bookmark: Features
+## 🔖 Features
 
 -   ⏱️ Easy to use!
 -   🔄 Provides Uptime
@@ -17,13 +17,13 @@ Quick Uptime is a powerful module which allows you to Uptime any website
 -   🕸️ User Friendly
 -   and much more!
 
-## :pushpin:  Installation
+## 📌 Installation
 
 ```js
 npm install quickuptime
 ```
 
-### :label: Example Code :
+### 🏷 Example Code :
 
 ```js
 // Load the Package
@@ -58,13 +58,13 @@ client.stopuptime()
 client.allurls() 
 ```
 
-## :rocket: Documentation 
+## 🚀 Documentation 
 
 https://quickuptime.js.org/
 
 
 ## 📝 Support Server
 
-<a href="https://discord.gg/devs"><img src="https://invidget.switchblade.xyz/devs"/></a>
+<a href="https://discord.gg/anyF4j3MUu"><img src="https://invidget.switchblade.xyz/anyF4j3MUu"/></a>
 <br><br>
 </div>
