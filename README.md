@@ -30,7 +30,7 @@ npm install quickuptime
 const quickuptime = require('quickuptime')
 const client = new quickuptime.Client()
 
-// Starts uptiming the url's stored the in the db within an interval of 60000ms or the time configured in ms.
+// Starts uptiming the url's stored in the db within an interval of 60000ms or the time configured in ms.
 client.start() 
 
 // Adds the url to the database.
