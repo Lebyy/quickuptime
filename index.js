@@ -30,13 +30,16 @@ class Client {
    * @return {boolean} Return true if sucess 
    * @memberof Client
    */
-  async start() {
+  async start(log) {
     let urls = this.get()
     if (urls === null) throw new Error(`No url's were found, add one before continuing.`);
     let int = this.int || 60000
     urls.forEach((url) => {
     this.interval = setInterval(async () => {
-        await fetch(url);
+    let response = await fetch(url);
+    if(log === true){
+    console.log(response)
+    }
       }, int);
     });
     return true
@@ -78,11 +81,13 @@ class Client {
    * @return {boolean} Return true if sucess 
    * @memberof Client
    */
-  async uptime(url, interval) {
+  async uptime(url, interval, log) {
     let int = interval || 60000
     let intervalstart = setInterval(async () => {
-      const response = await fetch(url);
-      return response;
+    const response = await fetch(url);
+    if(log === true){
+    console.log(response)
+    }
     }, int);
     this.intervalsingle = intervalstart
     return true;
