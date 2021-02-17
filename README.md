@@ -31,7 +31,7 @@ const quickuptime = require('quickuptime')
 const client = new quickuptime.Client()
 
 // Starts uptiming the url's stored in the db within an interval of 60000ms or the time configured in ms.
-client.start() 
+client.start(true) 
 
 // Adds the url to the database.
 client.addurl(url) 
@@ -40,7 +40,7 @@ client.addurl(url)
 client.removeurl() 
 
 // Sets up a temp pinger which will ping the url supplied every interval supplied ms.
-client.uptime(url, interval) 
+client.uptime(url, interval, true) 
 
 // Clear all the data present.
 client.clear() 
