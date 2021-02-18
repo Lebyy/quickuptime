@@ -32,7 +32,7 @@ const quickuptime = require('quickuptime')
 let data = {
 httpclient: "node-fetch" // wumpfetch, got and axios supported!
 }
-const client = new quickuptime.Client()
+const client = new quickuptime.Client(data)
 
 // Starts uptiming the url's stored the in the db within an interval of 60000ms or the time configured in ms.
 client.start() 

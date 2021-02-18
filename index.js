@@ -23,7 +23,13 @@ class Client {
     this.set = (content) => db.set("interval", content)
     this.interval;
     this.intervalsingle;
-		this.httpclient = data.httpclient || "node-fetch"
+		if(data){
+		this.httpclient = data.httpclient
+		}
+		if(this.httpclient !== "node-fetch" || this.httpclient !== "got" || this.httpclient !== "wumpfetch"){
+		this.httpclient = "node-fetch"
+		}
+		console.log(this.httpclient)
   }
 
   /**
@@ -33,6 +39,7 @@ class Client {
    * @memberof Client
    */
   async start(log) {
+		if (typeof(log) != 'boolean') throw new Error(`Expected the log option to be boolean, recieved ${typeof(boolean)}`);
     let urls = this.get()
 		let starthttpclient = this.httpclient
     if (urls === null) throw new Error(`No url's were found, add one before continuing.`);
@@ -96,7 +103,10 @@ class Client {
    * @memberof Client
    */
   async uptime(url, interval, log) {
-    let int = interval || 60000
+		if (typeof(url) != 'string') throw new Error(`Expected url to be string, recieved ${typeof(url)}`);
+		if (typeof(interval) != 'number') throw new Error(`Expected interval to be number, recieved ${typeof(interval)}`);
+		if (typeof(log) != 'boolean') throw new Error(`Expected the log option to be boolean, recieved ${typeof(boolean)}`);
+		let int = interval || 60000
 		let uptimehttpclient = this.httpclient
 		let response;
     let intervalstart = setInterval(async () => {
