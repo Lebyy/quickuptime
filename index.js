@@ -3,24 +3,33 @@ const {
   Database
 } = require('instant.db');
 const db = new Database('./quickuptime.json');
-const ms = require("ms")
+const wumpfetch = require('wumpfetch');
+const axios = require('axios');
+const got = require('got');
 /**
  *
  *
  * @class Client
  */
 class Client {
-  constructor() {
-    this.urls = db.get("urls");
-    this.int = db.get("interval");
-    this.push = (content) => db.push("urls", content);
-    this.pull = (content) => db.pull("urls", content);
+  constructor(data) {
+    this.urls = db.get("urls")
+    this.int = db.get("interval")
+    this.push = (content) => db.push("urls", content)
+    this.pull = (content) => db.pull("urls", content)
     this.get = () => {
     return db.get("urls")
     }
-    this.set = (content) => db.set("interval", content);
+    this.set = (content) => db.set("interval", content)
     this.interval;
     this.intervalsingle;
+		if(data){
+		this.httpclient = data.httpclient
+		}
+		if(this.httpclient !== "node-fetch" || this.httpclient !== "got" || this.httpclient !== "wumpfetch"){
+		this.httpclient = "node-fetch"
+		}
+		console.log(this.httpclient)
   }
 
   /**
@@ -30,16 +39,30 @@ class Client {
    * @memberof Client
    */
   async start(log) {
+		if (typeof(log) != 'boolean') throw new Error(`Expected the log option to be boolean, recieved ${typeof(boolean)}`);
     let urls = this.get()
+		let starthttpclient = this.httpclient
     if (urls === null) throw new Error(`No url's were found, add one before continuing.`);
     let int = this.int || 60000
+		let response;
     urls.forEach((url) => {
     this.interval = setInterval(async () => {
-    let response = await fetch(url);
+		if(starthttpclient === "node-fetch"){
+    response = await fetch(url);
+		}
+		if(starthttpclient === "wumpfetch"){
+    response = await wumpfetch(url, { chaining: false });
+		}
+		if(starthttpclient === "got"){
+    response = await got(url);
+		}
+		if(starthttpclient === "axios"){
+    response = await axios.get(url)
+		}
     if(log === true){
     console.log(response)
     }
-      }, int);
+    }, int);
     });
     return true
   }
@@ -80,10 +103,25 @@ class Client {
    * @memberof Client
    */
   async uptime(url, interval, log) {
-    let int = interval || 60000
-    int = ms(int)
+		if (typeof(url) != 'string') throw new Error(`Expected url to be string, recieved ${typeof(url)}`);
+		if (typeof(interval) != 'number') throw new Error(`Expected interval to be number, recieved ${typeof(interval)}`);
+		if (typeof(log) != 'boolean') throw new Error(`Expected the log option to be boolean, recieved ${typeof(boolean)}`);
+		let int = interval || 60000
+		let uptimehttpclient = this.httpclient
+		let response;
     let intervalstart = setInterval(async () => {
-    const response = await fetch(url);
+    if(uptimehttpclient === "node-fetch"){
+    response = await fetch(url);
+		}
+		if(uptimehttpclient === "wumpfetch"){
+    response = await wumpfetch(url, { chaining: false });
+		}
+		if(uptimehttpclient === "got"){
+    response = await got(url);
+		}
+		if(uptimehttpclient === "axios"){
+    response = await axios.get(url)
+		}
     if(log === true){
     console.log(response)
     }
@@ -112,7 +150,6 @@ class Client {
    */
    setinterval(interval) {
     if (typeof(interval) != 'number') throw new Error(`Expected interval to be number, recieved ${typeof(interval)}`);
-    interval = ms(interval)
     this.set(interval)
     return true;
   }
