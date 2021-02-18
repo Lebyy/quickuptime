@@ -11,14 +11,14 @@ const ms = require("ms")
  */
 class Client {
   constructor() {
-    this.urls = db.get("urls")
-    this.int = db.get("interval")
-    this.push = (content) => db.push("urls", content)
-    this.pull = (content) => db.pull("urls", content)
+    this.urls = db.get("urls");
+    this.int = db.get("interval");
+    this.push = (content) => db.push("urls", content);
+    this.pull = (content) => db.pull("urls", content);
     this.get = () => {
     return db.get("urls")
     }
-    this.set = (content) => db.set("interval", content)
+    this.set = (content) => db.set("interval", content);
     this.interval;
     this.intervalsingle;
   }
