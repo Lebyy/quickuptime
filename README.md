@@ -15,6 +15,7 @@ Quick Uptime is a powerful module which allows you to Uptime any website
 -   ⚙️ Customizable
 -   🚀 Super-powerful
 -   🕸️ User Friendly
+-   🔗 Multiple http clients supported
 -   and much more!
 
 ## 📌 Installation
@@ -28,10 +29,13 @@ npm install quickuptime
 ```js
 // Load the Package
 const quickuptime = require('quickuptime')
-const client = new quickuptime.Client()
+let data = {
+httpclient: "node-fetch" // wumpfetch, got and axios supported!
+}
+const client = new quickuptime.Client(data)
 
-// Starts uptiming the url's stored in the db within an interval of 60000ms or the time configured in ms.
-client.start(true) 
+// Starts uptiming the url's stored the in the db within an interval of 60000ms or the time configured in ms.
+client.start() 
 
 // Adds the url to the database.
 client.addurl(url) 
@@ -40,7 +44,7 @@ client.addurl(url)
 client.removeurl() 
 
 // Sets up a temp pinger which will ping the url supplied every interval supplied ms.
-client.uptime(url, interval, true) 
+client.uptime(url, interval) 
 
 // Clear all the data present.
 client.clear() 
