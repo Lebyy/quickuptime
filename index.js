@@ -3,7 +3,7 @@ const {
   Database
 } = require('instant.db');
 const db = new Database('./quickuptime.json');
-
+const ms = require("ms")
 /**
  *
  *
@@ -54,7 +54,6 @@ class Client {
    addurl(url) {
     if (typeof(url) != 'string') throw new Error(`Expected url to be string, recieved ${typeof(url)}`);
     if (!url) throw new Error(`Missing URL, please specify a url to remove.`);
-    this.innit()
     this.push(url)
     return true;
   }
@@ -82,6 +81,7 @@ class Client {
    */
   async uptime(url, interval, log) {
     let int = interval || 60000
+    int = ms(int)
     let intervalstart = setInterval(async () => {
     const response = await fetch(url);
     if(log === true){
@@ -112,6 +112,7 @@ class Client {
    */
    setinterval(interval) {
     if (typeof(interval) != 'number') throw new Error(`Expected interval to be number, recieved ${typeof(interval)}`);
+    interval = ms(interval)
     this.set(interval)
     return true;
   }
@@ -149,7 +150,7 @@ class Client {
    allurls() {
     let urls = this.get() || null
     if (!urls === null) throw new Error(`No URL's found, you have not added any url(s) yet.`);
-    return this.get()
+    return urls
   }
 
 
