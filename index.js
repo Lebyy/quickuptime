@@ -3,41 +3,59 @@ const {
   Database
 } = require('instant.db');
 const db = new Database('./quickuptime.json');
-
+const wumpfetch = require('wumpfetch');
+const axios = require('axios');
+const got = require('got');
 /**
  *
  *
  * @class Client
  */
 class Client {
-  constructor() {
+  constructor(data) {
     this.urls = db.get("urls")
     this.int = db.get("interval")
-    this.innit = () => db.set("urls", [])
     this.push = (content) => db.push("urls", content)
     this.pull = (content) => db.pull("urls", content)
     this.get = () => {
-      return db.get("urls")
+    return db.get("urls")
     }
     this.set = (content) => db.set("interval", content)
     this.interval;
     this.intervalsingle;
+		this.httpclient = data.httpclient || "node-fetch"
   }
 
   /**
    *
    *
-   * @return {boolean} Return true if sucess 
+   * @return {boolean} Return's true if sucess 
    * @memberof Client
    */
-  async start() {
+  async start(log) {
     let urls = this.get()
+		let starthttpclient = this.httpclient
     if (urls === null) throw new Error(`No url's were found, add one before continuing.`);
     let int = this.int || 60000
+		let response;
     urls.forEach((url) => {
     this.interval = setInterval(async () => {
-        await fetch(url);
-      }, int);
+		if(starthttpclient === "node-fetch"){
+    response = await fetch(url);
+		}
+		if(starthttpclient === "wumpfetch"){
+    response = await wumpfetch(url, { chaining: false });
+		}
+		if(starthttpclient === "got"){
+    response = await got(url);
+		}
+		if(starthttpclient === "axios"){
+    response = await axios.get(url)
+		}
+    if(log === true){
+    console.log(response)
+    }
+    }, int);
     });
     return true
   }
@@ -46,13 +64,12 @@ class Client {
    *
    *
    * @param {string} url The url to add
-   * @return {boolean} Return true if sucess 
+   * @return {boolean} Return's true if sucess 
    * @memberof Client
    */
-  async addurl(url) {
+   addurl(url) {
     if (typeof(url) != 'string') throw new Error(`Expected url to be string, recieved ${typeof(url)}`);
     if (!url) throw new Error(`Missing URL, please specify a url to remove.`);
-    this.innit()
     this.push(url)
     return true;
   }
@@ -61,10 +78,10 @@ class Client {
    *
    *
    * @param {string} url The url to remove
-   * @return {boolean} Return true if sucess  
+   * @return {boolean} Return's true if sucess  
    * @memberof Client
    */
-  async removeurl(url) {
+   removeurl(url) {
     if (typeof(url) != 'string') throw new Error(`Expected url to be string, recieved ${typeof(url)}`);
     this.pull(url)
     return true;
@@ -75,14 +92,29 @@ class Client {
    *
    * @param {string} url The url to ping
    * @param {number} interval The time in ms to ping the url after
-   * @return {boolean} Return true if sucess 
+   * @return {boolean} Return's true if sucess 
    * @memberof Client
    */
-  async uptime(url, interval) {
+  async uptime(url, interval, log) {
     let int = interval || 60000
+		let uptimehttpclient = this.httpclient
+		let response;
     let intervalstart = setInterval(async () => {
-      const response = await fetch(url);
-      return response;
+    if(uptimehttpclient === "node-fetch"){
+    response = await fetch(url);
+		}
+		if(uptimehttpclient === "wumpfetch"){
+    response = await wumpfetch(url, { chaining: false });
+		}
+		if(uptimehttpclient === "got"){
+    response = await got(url);
+		}
+		if(uptimehttpclient === "axios"){
+    response = await axios.get(url)
+		}
+    if(log === true){
+    console.log(response)
+    }
     }, int);
     this.intervalsingle = intervalstart
     return true;
@@ -91,10 +123,10 @@ class Client {
   /**
    *
    *
-   * @return {boolean} Return true if sucess 
+   * @return {boolean} Return's true if sucess 
    * @memberof Client
    */
-  async clear() {
+   clear() {
     db.deleteAll()
     return true;
   }
@@ -103,10 +135,10 @@ class Client {
    *
    *
    * @param {number} interval The time in ms to ping the url after
-   * @return {boolean} Return true if sucess 
+   * @return {boolean} Return's true if sucess 
    * @memberof Client
    */
-  async setinterval(interval) {
+   setinterval(interval) {
     if (typeof(interval) != 'number') throw new Error(`Expected interval to be number, recieved ${typeof(interval)}`);
     this.set(interval)
     return true;
@@ -115,10 +147,10 @@ class Client {
   /**
    *
    *
-   * @return {boolean} Return true if sucess  
+   * @return {boolean} Return's true if sucess  
    * @memberof Client
    */
-  async stop() {
+   stop() {
     if (!this.interval) throw new Error(`The pinging of the link(s) supplied has not started yet.`);
     clearInterval(this.interval)
     return true
@@ -127,10 +159,10 @@ class Client {
   /**
    *
    *
-   * @return {boolean} Return true if sucess  
+   * @return {boolean} Return's true if sucess  
    * @memberof Client
    */
-  async stopuptime() {
+   stopuptime() {
     if (!this.intervalsingle) throw new Error(`The pinging of the link supplied has not started yet.`);
     clearInterval(this.intervalsingle)
     return true
@@ -139,13 +171,13 @@ class Client {
   /**
    *
    *
-   * @return {boolean} Return true if sucess 
+   * @return {object} Return's the url's
    * @memberof Client
    */
-  async allurls() {
+   allurls() {
     let urls = this.get() || null
     if (!urls === null) throw new Error(`No URL's found, you have not added any url(s) yet.`);
-    return this.get()
+    return urls
   }
 
 
