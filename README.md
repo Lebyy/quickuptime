@@ -16,6 +16,7 @@ Quick Uptime is a powerful module which allows you to Uptime any website
 -   🚀 Super-powerful
 -   🕸️ User Friendly
 -   🔗 Multiple http clients supported
+-   🇹 Typings supported!
 -   and much more!
 
 ## 📌 Installation

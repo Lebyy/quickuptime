@@ -1,7 +1,7 @@
 {
   "name": "quickuptime",
   "version": "1.0.2",
-  "description": "A package which will easily help you uptime any url within the supplied interval.",
+  "description": "A package which will easily help you ping any url within the supplied interval.",
   "main": "index.js",
   "dependencies": {
     "axios": "^0.21.1",
