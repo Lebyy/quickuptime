@@ -345,11 +345,11 @@ class Client {
         return urls
     }
 
-
 }
 
 
-module.exports = {
+module.exports = {  
     version: require('./package.json').version,
     Client: Client
 }
+   
