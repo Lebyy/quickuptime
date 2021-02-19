@@ -38,6 +38,7 @@ class Client {
         this.interval;
         this.intervalsingle;
         this.intervalunique;
+				let uim = new Map()
 
         if (data) {
             this.httpclient = data.httpclient
@@ -122,6 +123,7 @@ class Client {
                     console.log(response)
                 }
             }, int);
+						uim.set(`interval_${uniqueid}`, this.intervalunique)
         });
         return true
     }
@@ -299,11 +301,12 @@ class Client {
      * @param {string} uniqueid The unique id for the dataset   
      * @memberof Client
      */
-    uniquestop() {
+    uniquestop(uniqueid) {
         if (!uniqueid) throw new Error(`Expected to receive a uniqueid but recieved none`);
-				let interval = this.intervalunique || null
+				let interval = uim.get(`uniqueinterval_${uniqueid}`)
         if (interval === null) throw new Error(`The pinging of the link(s) supplied has not started yet.`);
-				clearInterval(this.intervalunique)
+				clearInterval(interval)
+				uim.delete(`uniqueinterval_${uniqueid}`)
         return true
     }
 
@@ -340,7 +343,7 @@ class Client {
      */
     uniqueallurls(uniqueid) {
         if (!uniqueid) throw new Error(`Expected to receive a uniqueid but recieved none`);
-				let urls = this.getunique || null
+				let urls = this.getunique(uniqueid) || null
 				if (!urls === null) throw new Error(`No URL's found, you have not added any url(s) yet.`);
         return urls
     }
