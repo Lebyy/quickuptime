@@ -31,7 +31,7 @@ npm install quickuptime
 // Load the Package
 const quickuptime = require('quickuptime')
 let data = {
-httpclient: "node-fetch" // wumpfetch, got and axios supported!
+httpclient: "node-fetch" // wumpfetch, got, axios and superagent supported!
 }
 const client = new quickuptime.Client(data)
 
@@ -62,7 +62,7 @@ client.uniquesetinterval(interval, uniqueid)
 
 // Stops the pinging process.
 client.stop() 
-client.uniquestop()
+client.uniquestop(uniqueid)
 
 // Stops the temp pinging process.
 client.stopuptime() 

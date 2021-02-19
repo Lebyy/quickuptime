@@ -6,6 +6,8 @@ const db = new Database('./quickuptime.json');
 const wumpfetch = require('wumpfetch');
 const axios = require('axios');
 const got = require('got');
+const superagent = require('superagent');
+const SetInterval = require('set-interval')
 /**
  *
  *
@@ -18,7 +20,6 @@ class Client {
         this.uniqueint = (id) => db.get(`interval_${id}`)
 
         if (!Array.isArray(this.urls)) db.set('urls', []);
-        if (!Array.isArray(this.int)) db.set('interval', []);
 
         this.push = (content) => db.push("urls", content)
         this.uniquepush = (content, id) => db.push(`urls_${id}`, content)
@@ -38,14 +39,17 @@ class Client {
         this.interval;
         this.intervalsingle;
         this.intervalunique;
-				let uim = new Map()
 
         if (data) {
-            this.httpclient = data.httpclient
+				    this.httpclient = data.httpclient
+						if (this.httpclient !== "node-fetch" && this.httpclient !== "got" && this.httpclient !== "wumpfetch" && this.httpclient !== "axios" && this.httpclient !== "superagent") {
+            this.httpclient = "node-fetch"
+            }
         }
-        if (this.httpclient !== "node-fetch" || this.httpclient !== "got" || this.httpclient !== "wumpfetch") {
+        if (!this.httpclient) {
             this.httpclient = "node-fetch"
         }
+
     }
 
     /**
@@ -58,13 +62,13 @@ class Client {
      */
     async start(log) {
         if (typeof(log) != 'boolean') throw new Error(`Expected the log option to be boolean, recieved ${typeof(boolean)}`);
-        let urls = this.get()
+        let urls = this.get() || null
         if (urls === null) throw new Error(`No url's were found, add one before continuing.`);
         let starthttpclient = this.httpclient
         let int = this.int || 60000
         let response;
         urls.forEach((url) => {
-            this.interval = setInterval(async () => {
+        SetInterval.start(async () => {
                 if (starthttpclient === "node-fetch") {
                     response = await fetch(url);
                 }
@@ -79,10 +83,13 @@ class Client {
                 if (starthttpclient === "axios") {
                     response = await axios.get(url)
                 }
+								if (starthttpclient === "superagent") {
+                    response = await superagent.get(url)
+                }
                 if (log === true) {
                     console.log(response)
                 }
-            }, int);
+        }, int, "interval");
         });
         return true
     }
@@ -98,13 +105,13 @@ class Client {
     async uniquestart(log, uniqueid) {
         if (typeof(log) != 'boolean') throw new Error(`Expected the log option to be boolean, recieved ${typeof(boolean)}`);
 				if (!uniqueid) throw new Error(`Expected to receive a uniqueid but recieved none`);
-        let urls = this.getunique(uniqueid)
+        let urls = this.getunique(uniqueid) || null
         if (urls === null) throw new Error(`No url's were found, add one before continuing.`);
         let starthttpclient = this.httpclient
         let int = this.uniqueint(uniqueid) || 60000
         let response;
         urls.forEach((url) => {
-            this.intervalunique = setInterval(async () => {
+        SetInterval.start(async () => {
                 if (starthttpclient === "node-fetch") {
                     response = await fetch(url);
                 }
@@ -119,11 +126,13 @@ class Client {
                 if (starthttpclient === "axios") {
                     response = await axios.get(url)
                 }
+								if (starthttpclient === "superagent") {
+                    response = await superagent.get(url)
+                }
                 if (log === true) {
                     console.log(response)
                 }
-            }, int);
-						uim.set(`interval_${uniqueid}`, this.intervalunique)
+        }, int, uniqueid);
         });
         return true
     }
@@ -206,7 +215,7 @@ class Client {
         let int = interval || 60000
         let uptimehttpclient = this.httpclient
         let response;
-        let intervalstart = setInterval(async () => {
+        let intervalstart = SetInterval.start(async () => {
             if (uptimehttpclient === "node-fetch") {
                 response = await fetch(url);
             }
@@ -221,10 +230,13 @@ class Client {
             if (uptimehttpclient === "axios") {
                 response = await axios.get(url)
             }
+						if (starthttpclient === "superagent") {
+                response = await superagent.get(url)
+                }
             if (log === true) {
                 console.log(response)
             }
-        }, int);
+        }, int, "uptimeinterval");
         this.intervalsingle = intervalstart
         return true;
     }
@@ -289,8 +301,7 @@ class Client {
      * @memberof Client
      */
     stop() {
-        if (!this.interval) throw new Error(`The pinging of the link(s) supplied has not started yet.`);
-        clearInterval(this.interval)
+        SetInterval.clear("interval")
         return true
     }
 
@@ -303,10 +314,7 @@ class Client {
      */
     uniquestop(uniqueid) {
         if (!uniqueid) throw new Error(`Expected to receive a uniqueid but recieved none`);
-				let interval = uim.get(`uniqueinterval_${uniqueid}`)
-        if (interval === null) throw new Error(`The pinging of the link(s) supplied has not started yet.`);
-				clearInterval(interval)
-				uim.delete(`uniqueinterval_${uniqueid}`)
+				SetInterval.clear(uniqueid)
         return true
     }
 
@@ -317,8 +325,7 @@ class Client {
      * @memberof Client
      */
     stopuptime() {
-        if (!this.intervalsingle) throw new Error(`The pinging of the link supplied has not started yet.`);
-        clearInterval(this.intervalsingle)
+        SetInterval.clear("uptimeinterval")
         return true
     }
 
