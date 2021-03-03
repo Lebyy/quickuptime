@@ -5,6 +5,7 @@ export class Client{
   
 public start(log: boolean);
 public uniquestart(log: boolean, uniqueid:string);
+public uniquestartall(log: boolean);
 public addurl(url: string);
 public uniqueaddurl(url: string, uniqueid:string);
 public removeurl(url: string);
@@ -19,4 +20,5 @@ public uniquestop();
 public stopuptime();
 public allurls();
 public uniqueallurls(uniqueid:string);
+public alluniqueurls();
 }

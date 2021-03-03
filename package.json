@@ -1,6 +1,6 @@
 {
   "name": "quickuptime",
-  "version": "1.0.5",
+  "version": "1.0.5-Patch",
   "description": "A package which will easily help you ping any url within the supplied interval.",
   "main": "index.js",
   "dependencies": {
