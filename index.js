@@ -8,6 +8,7 @@ const axios = require('axios');
 const got = require('got');
 const superagent = require('superagent');
 const SetInterval = require('set-interval')
+const ms = require('ms')
 /**
  *
  *
@@ -61,6 +62,7 @@ class Client {
      * @memberof Client
      */
     async start(log) {
+			  if(!log) log = false
         if (typeof(log) != 'boolean') throw new Error(`Expected the log option to be boolean, recieved ${typeof(boolean)}`);
         let urls = this.get() || null
         if (urls === null) throw new Error(`No url's were found, add one before continuing.`);
@@ -86,7 +88,7 @@ class Client {
 								if (starthttpclient === "superagent") {
                     response = await superagent.get(url)
                 }
-                if (log === true) {
+                if (log) {
                     console.log(response)
                 }
         }, int, "interval");
@@ -103,6 +105,7 @@ class Client {
      * @memberof Client
      */
     async uniquestart(log, uniqueid) {
+			  if(!log) log = false
         if (typeof(log) != 'boolean') throw new Error(`Expected the log option to be boolean, recieved ${typeof(boolean)}`);
 				if (!uniqueid) throw new Error(`Expected to receive a uniqueid but recieved none`);
         let urls = this.getunique(uniqueid) || null
@@ -129,13 +132,60 @@ class Client {
 								if (starthttpclient === "superagent") {
                     response = await superagent.get(url)
                 }
-                if (log === true) {
+                if (log) {
                     console.log(response)
                 }
         }, int, uniqueid);
         });
         return true
     }
+
+		/**
+     *
+     *
+     * @return {boolean} Return's true if sucess 
+     * @param {boolean} log Whether to log the response in console or not.
+     * @memberof Client
+     */
+    async uniquestartall(log) {
+			  if(!log) log = false
+        if (typeof(log) != 'boolean') throw new Error(`Expected the log option to be boolean, recieved ${typeof(boolean)}`);
+        let urls = db.all().filter(data => data.ID.startsWith(`urls_`)) || null
+        if (urls === null) throw new Error(`No url's were found, add one before continuing.`);
+        let starthttpclient = this.httpclient
+				for (let i = 0; i < urls.length; i++) {
+				let uniqueid = urls[i].ID.slice(5)
+        let int = this.uniqueint(uniqueid) || 60000
+        let response;
+				let url = urls[i].data
+        url.forEach((url) => {
+        SetInterval.start(async () => {
+                if (starthttpclient === "node-fetch") {
+                    response = await fetch(url);
+                }
+                if (starthttpclient === "wumpfetch") {
+                    response = await wumpfetch(url, {
+                        chaining: false
+                    });
+                }
+                if (starthttpclient === "got") {
+                    response = await got(url);
+                }
+                if (starthttpclient === "axios") {
+                    response = await axios.get(url)
+                }
+								if (starthttpclient === "superagent") {
+                    response = await superagent.get(url)
+                }
+                if (log) {
+                    console.log(response)
+                }
+        }, int, uniqueid);
+        });
+				}
+        return true
+    }
+		
 
     /**
      *
@@ -209,9 +259,13 @@ class Client {
      * @memberof Client
      */
     async uptime(url, interval, log) {
+			  if(!log) log = false
         if (typeof(url) != 'string') throw new Error(`Expected url to be string, recieved ${typeof(url)}`);
-        if (typeof(interval) != 'number') throw new Error(`Expected interval to be number, recieved ${typeof(interval)}`);
+				let numcheck = parseInt(interval)
+        if (isNaN(numcheck)) throw new Error(`An invalid number for interval was received!`);
         if (typeof(log) != 'boolean') throw new Error(`Expected the log option to be boolean, recieved ${typeof(boolean)}`);
+				interval = interval.toString();
+				interval = ms(`${interval}`)
         let int = interval || 60000
         let uptimehttpclient = this.httpclient
         let response;
@@ -230,10 +284,10 @@ class Client {
             if (uptimehttpclient === "axios") {
                 response = await axios.get(url)
             }
-						if (starthttpclient === "superagent") {
+						if (uptimehttpclient === "superagent") {
                 response = await superagent.get(url)
-                }
-            if (log === true) {
+             }
+            if (log) {
                 console.log(response)
             }
         }, int, "uptimeinterval");
@@ -269,12 +323,15 @@ class Client {
     /**
      *
      *
-     * @param {number} interval The time in ms to ping the url after
+     * @param {number} interval The time to ping the url after
      * @return {boolean} Return's true if sucess 
      * @memberof Client
      */
     setinterval(interval) {
-        if (typeof(interval) != 'number') throw new Error(`Expected interval to be number, recieved ${typeof(interval)}`);
+        let numcheck = parseInt(interval)
+        if (isNaN(numcheck)) throw new Error(`An invalid number for interval was received!`);
+				interval = interval.toString();
+				interval = ms(`${interval}`)
         this.set(interval)
         return true;
     }
@@ -282,14 +339,17 @@ class Client {
     /**
      *
      *
-     * @param {number} interval The time in ms to ping the url after
+     * @param {number} interval The time to ping the url after
      * @param {string} uniqueid The unique id for the dataset 
      * @return {boolean} Return's true if sucess 
      * @memberof Client
      */
     uniquesetinterval(interval, uniqueid) {
-        if (typeof(interval) != 'number') throw new Error(`Expected interval to be number, recieved ${typeof(interval)}`);
+        let numcheck = parseInt(interval)
+        if (isNaN(numcheck)) throw new Error(`An invalid number for interval was received!`);
         if (!uniqueid) throw new Error(`Expected to receive a uniqueid but recieved none`);
+				interval = interval.toString();
+				interval = ms(`${interval}`)
 				this.uniqueset(interval, uniqueid)
         return true;
     }
@@ -332,7 +392,7 @@ class Client {
     /**
      *
      *
-     * @return {object} Return's the url's
+     * @return {Array} Return's the url's
      * @memberof Client
      */
     allurls() {
@@ -344,7 +404,7 @@ class Client {
     /**
      *
      *
-     * @return {object} Return's the url's
+     * @return {Array} Return's the url's
      * @param {string} uniqueid The unique id for the dataset
      * @memberof Client
      */
@@ -353,6 +413,23 @@ class Client {
 				let urls = this.getunique(uniqueid) || null
 				if (!urls === null) throw new Error(`No URL's found, you have not added any url(s) yet.`);
         return urls
+    }
+
+		/**
+     *
+     *
+     * @return {Array} Return's the url's
+     * @memberof Client
+     */
+    alluniqueurls() {
+				let urls = db.all().filter(data => data.ID.startsWith(`urls_`)) || null
+				if (!urls === null) throw new Error(`No URL's found, you have not added any url(s) yet.`);
+				let arrayurls = []
+				urls.forEach(function (arrayItem) {
+        var unqurl = arrayItem;
+        arrayurls.push(unqurl.data)
+				});
+        return arrayurls
     }
 
 
