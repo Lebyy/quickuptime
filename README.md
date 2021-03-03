@@ -17,6 +17,7 @@ Quick Uptime is a powerful module which allows you to Uptime any website
 -   🕸️ User Friendly
 -   🔗 Multiple http clients supported
 -   🇹 Typings supported!
+-   ⏰ Uses ms for timings!
 -   and much more!
 
 ## 📌 Installation
@@ -35,9 +36,10 @@ httpclient: "node-fetch" // wumpfetch, got, axios and superagent supported!
 }
 const client = new quickuptime.Client(data)
 
-// Starts uptiming the url's stored in the db within an interval of 60000ms or the time configured in ms.
-client.start(true) 
-client.uniquestart(true, uniqueid)
+// Starts uptiming the url's stored in the db within an interval of 60000ms or the time configured.
+await client.start(true) 
+await client.uniquestart(true, uniqueid)
+await client.uniquestartall(true)
 
 // Adds the url to the database.
 client.addurl(url) 
@@ -47,8 +49,8 @@ client.uniqueaddurl(url, uniqueid)
 client.removeurl(url) 
 client.uniqueremoveurl(url, uniqueid)
 
-// Sets up a temp pinger which will ping the url supplied every interval supplied ms.
-client.uptime(url, interval) 
+// Sets up a temp pinger which will ping the url supplied every interval supplied. (You can also provide the time as 10d!)
+await client.uptime(url, interval, true) 
 
 // Clear all the data present.
 client.clear() 
@@ -56,7 +58,7 @@ client.clear()
 // Clears only the data of the specific unique user id
 client.uniqueclear(uniqueid)
 
-// Sets the time in ms to ping the urls after.
+// Sets the time in ms to ping the urls after. (You can also provide the time as 10d!)
 client.setinterval(interval)
 client.uniquesetinterval(interval, uniqueid)
 
@@ -69,7 +71,8 @@ client.stopuptime()
 
 // Returns all/user's of the urls present in the database in an array form.
 client.allurls() 
-uniqueallurls(uniqueid)
+client.uniqueallurls(uniqueid)
+client.alluniqueurls()
 
 ```
 
