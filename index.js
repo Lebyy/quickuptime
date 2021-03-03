@@ -431,12 +431,11 @@ class Client {
 				});
         return arrayurls
     }
-
-
 }
 
 
-module.exports = {
+module.exports = {  
     version: require('./package.json').version,
     Client: Client
 }
+   
