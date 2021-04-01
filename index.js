@@ -1,7 +1,5 @@
 const fetch = require("node-fetch")
-const {
-    Database
-} = require('instant.db');
+const { Database } = require('instant.db');
 const db = new Database('./quickuptime.json');
 const wumpfetch = require('wumpfetch');
 const axios = require('axios');
