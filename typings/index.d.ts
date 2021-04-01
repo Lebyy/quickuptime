@@ -1,3 +1,5 @@
+declare module 'discord-voice' {
+import { default as Database } from "instant.db";
 /**
  *
  *
@@ -164,5 +166,5 @@ export class Client {
  */
     alluniqueurls(): any[];
 }
-import { Database } from "instant.db";
+}
 export declare const version: any;

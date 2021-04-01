@@ -1,13 +1,13 @@
 {
   "name": "quickuptime",
-  "version": "1.0.6",
+  "version": "1.0.6-Update",
   "description": "A package which will easily help you ping any url within the supplied interval.",
   "main": "index.js",
 	"types": "typings/index.d.ts",
   "dependencies": {
     "axios": "*",
     "got": "*",
-    "instant.db": "1.0.0",
+    "instant.db": "2.0.0",
     "node-fetch": "*",
     "set-interval": "*",
     "superagent": "*",
